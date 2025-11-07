@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
-import 'income_list_screen.dart';
+import 'expense_list_screen.dart';
 import 'transaction_form_screen.dart';
 
-class ExpenseListScreen extends StatefulWidget {
-  const ExpenseListScreen({super.key});
+class IncomeListScreen extends StatefulWidget {
+  const IncomeListScreen({super.key});
 
   @override
-  State<ExpenseListScreen> createState() => _ExpenseListScreenState();
+  State<IncomeListScreen> createState() => _IncomeListScreenState();
 }
 
-class _ExpenseListScreenState extends State<ExpenseListScreen> {
+class _IncomeListScreenState extends State<IncomeListScreen> {
   void _openForm() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => const TransactionFormScreen(isIncome: false)),
+      MaterialPageRoute(builder: (_) => const TransactionFormScreen(isIncome: true)),
     );
     setState(() {});
   }
 
-  void _switchToIncomes() {
+  void _switchToExpenses() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const IncomeListScreen()),
+      MaterialPageRoute(builder: (_) => const ExpenseListScreen()),
     );
   }
 
@@ -34,30 +34,30 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final expenses = TransactionStorage.expenses;
+    final incomes = TransactionStorage.incomes;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Расходы'),
+        title: const Text('Пополнения'),
         actions: [
           IconButton(
             icon: const Icon(Icons.add_circle_outline),
             onPressed: _openForm,
-            tooltip: 'Добавить расход',
+            tooltip: 'Добавить пополнение',
           ),
           IconButton(
             icon: const Icon(Icons.swap_horiz),
-            onPressed: _switchToIncomes,
-            tooltip: 'Перейти к пополнениям',
+            onPressed: _switchToExpenses,
+            tooltip: 'Перейти к расходам',
           ),
         ],
       ),
-      body: expenses.isEmpty
-          ? const Center(child: Text('Пока нет расходов'))
+      body: incomes.isEmpty
+          ? const Center(child: Text('Пока нет пополнений'))
           : ListView.builder(
-        itemCount: expenses.length,
+        itemCount: incomes.length,
         itemBuilder: (context, index) {
-          final tx = expenses[index];
+          final tx = incomes[index];
           return Card(
             margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: ListTile(
@@ -68,11 +68,11 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    '-${tx.amount.toStringAsFixed(2)} ₽',
-                    style: const TextStyle(color: Colors.red),
+                    '+${tx.amount.toStringAsFixed(2)} ₽',
+                    style: const TextStyle(color: Colors.green),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.grey),
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
                     onPressed: () => _deleteTransaction(tx),
                   ),
                 ],

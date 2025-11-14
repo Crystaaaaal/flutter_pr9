@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'app_router.dart';
 import 'models/transaction.dart';
+import 'widgets/transaction_provider.dart';
 
 void main() {
   TransactionStorage.expenses.addAll(initialExpenses);
   TransactionStorage.incomes.addAll(initialIncomes);
   TransactionStorage.recalculateBalance();
 
-  runApp(const ExpenseApp());
+  runApp(
+    TransactionProvider(
+      incomes: TransactionStorage.incomes,
+      expenses: TransactionStorage.expenses,
+      balance: TransactionStorage.balance,
+      addTransaction: TransactionStorage.addTransaction,
+      removeTransaction: TransactionStorage.removeTransaction,
+      child: const ExpenseApp(),
+    ),
+  );
 }
 
 class ExpenseApp extends StatelessWidget {
@@ -19,6 +29,7 @@ class ExpenseApp extends StatelessWidget {
       title: 'Контроль расходов',
       routerConfig: appRouter,
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
     );

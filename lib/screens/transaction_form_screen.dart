@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../widgets/transaction_provider.dart';
 import '../models/transaction.dart';
 
 class TransactionFormScreen extends StatefulWidget {
   final bool isIncome;
-
   const TransactionFormScreen({super.key, required this.isIncome});
-
   @override
   State<TransactionFormScreen> createState() => _TransactionFormScreenState();
 }
@@ -29,9 +28,8 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
             ? _imageUrlController.text
             : 'https://via.placeholder.com/100',
       );
-
-      TransactionStorage.addTransaction(tx);
-      context.pop(); // Возврат назад на список
+      TransactionProvider.of(context).addTransaction(tx);
+      context.pop();
     }
   }
 

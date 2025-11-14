@@ -44,8 +44,7 @@ class TransactionStorage {
 
   static void recalculateBalance() {
     final totalIncome = incomes.fold<double>(0.0, (sum, tx) => sum + tx.amount);
-    final totalExpenses =
-    expenses.fold<double>(0.0, (sum, tx) => sum + tx.amount);
+    final totalExpenses = expenses.fold<double>(0.0, (sum, tx) => sum + tx.amount);
     balance.value = totalIncome - totalExpenses;
   }
 }

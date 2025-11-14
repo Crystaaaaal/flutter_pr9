@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../models/transaction.dart';
+import '../widgets/transaction_provider.dart';
 
-class IncomeListScreen extends StatelessWidget {
+class IncomeListScreen extends StatefulWidget {
   const IncomeListScreen({super.key});
+  @override
+  State<IncomeListScreen> createState() => _IncomeListScreenState();
+}
+
+class _IncomeListScreenState extends State<IncomeListScreen> {
+  void _deleteTransaction(BuildContext context, tx) {
+    setState(() {
+      TransactionProvider.of(context).removeTransaction(tx);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final incomes = TransactionStorage.incomes;
+    final provider = TransactionProvider.of(context);
+    final incomes = provider.incomes;
 
     return Scaffold(
       appBar: AppBar(
@@ -25,7 +36,7 @@ class IncomeListScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.swap_horiz),
             tooltip: 'Перейти к расходам',
-            onPressed: () => context.go('/expenses'),
+            onPressed: () => context.push('/expenses'),
           ),
         ],
       ),
@@ -41,9 +52,18 @@ class IncomeListScreen extends StatelessWidget {
               leading: CircleAvatar(backgroundImage: NetworkImage(tx.imageUrl)),
               title: Text(tx.title),
               subtitle: Text(tx.source),
-              trailing: Text(
-                '+${tx.amount.toStringAsFixed(2)} ₽',
-                style: const TextStyle(color: Colors.green),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '+${tx.amount.toStringAsFixed(2)} ₽',
+                    style: const TextStyle(color: Colors.green),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
+                    onPressed: () => _deleteTransaction(context, tx),
+                  ),
+                ],
               ),
             ),
           );

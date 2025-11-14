@@ -1,13 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../models/transaction.dart';
+import '../widgets/transaction_provider.dart';
 
-class ExpenseListScreen extends StatelessWidget {
+class ExpenseListScreen extends StatefulWidget {
   const ExpenseListScreen({super.key});
+  @override
+  State<ExpenseListScreen> createState() => _ExpenseListScreenState();
+}
+
+class _ExpenseListScreenState extends State<ExpenseListScreen> {
+  void _deleteTransaction(BuildContext context, tx) {
+    setState(() {
+      TransactionProvider.of(context).removeTransaction(tx);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    final expenses = TransactionStorage.expenses;
+    final provider = TransactionProvider.of(context);
+    final expenses = provider.expenses;
 
     return Scaffold(
       appBar: AppBar(
@@ -25,7 +36,7 @@ class ExpenseListScreen extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.swap_horiz),
             tooltip: 'Перейти к пополнениям',
-            onPressed: () => context.go('/incomes'),
+            onPressed: () => context.push('/incomes'),
           ),
         ],
       ),
@@ -41,9 +52,18 @@ class ExpenseListScreen extends StatelessWidget {
               leading: CircleAvatar(backgroundImage: NetworkImage(tx.imageUrl)),
               title: Text(tx.title),
               subtitle: Text(tx.source),
-              trailing: Text(
-                '-${tx.amount.toStringAsFixed(2)} ₽',
-                style: const TextStyle(color: Colors.red),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    '-${tx.amount.toStringAsFixed(2)} ₽',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, color: Colors.grey),
+                    onPressed: () => _deleteTransaction(context, tx),
+                  ),
+                ],
               ),
             ),
           );

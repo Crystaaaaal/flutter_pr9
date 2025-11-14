@@ -1,24 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../widgets/transaction_provider.dart';
+import '../di_container.dart';
+import '../models/transaction.dart';
 
-class ExpenseListScreen extends StatefulWidget {
-  const ExpenseListScreen({super.key});
-  @override
-  State<ExpenseListScreen> createState() => _ExpenseListScreenState();
-}
-
-class _ExpenseListScreenState extends State<ExpenseListScreen> {
-  void _deleteTransaction(BuildContext context, tx) {
-    setState(() {
-      TransactionProvider.of(context).removeTransaction(tx);
-    });
-  }
-
+class ExpenseListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final provider = TransactionProvider.of(context);
-    final expenses = provider.expenses;
+    final expenses = getIt<List<Transaction>>(instanceName: 'expenses');
+    final storage = getIt<TransactionStorage>();
 
     return Scaffold(
       appBar: AppBar(
@@ -61,7 +50,9 @@ class _ExpenseListScreenState extends State<ExpenseListScreen> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete_outline, color: Colors.grey),
-                    onPressed: () => _deleteTransaction(context, tx),
+                    onPressed: () {
+                      storage.removeTransaction(tx);
+                    },
                   ),
                 ],
               ),

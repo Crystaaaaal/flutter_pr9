@@ -14,11 +14,11 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/incomes',
-      builder: (context, state) => const IncomeListScreen(),
+      builder: (context, state) => IncomeListScreen(),
     ),
     GoRoute(
       path: '/expenses',
-      builder: (context, state) => const ExpenseListScreen(),
+      builder: (context, state) => ExpenseListScreen(),
     ),
     GoRoute(
       path: '/add-income',

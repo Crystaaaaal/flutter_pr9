@@ -12,3 +12,4 @@ void setupDI(TransactionStorage storage) {
   getIt.registerSingleton<ValueNotifier<double>>(storage.balance);
   getIt.registerSingleton(storage);
 }
+

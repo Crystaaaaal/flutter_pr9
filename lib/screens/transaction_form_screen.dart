@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../store/transaction_store.dart';
+import '../store/transaction_form_store.dart';
+import '../store/income_store.dart';
+import '../store/expense_store.dart';
+import '../di/service_locator.dart';
 
 class TransactionFormScreen extends StatefulWidget {
   final bool isIncome;
-  final TransactionStore store;
+  final TransactionFormStore store;
 
   const TransactionFormScreen({super.key, required this.isIncome, required this.store});
 
@@ -14,37 +17,14 @@ class TransactionFormScreen extends StatefulWidget {
 
 class _TransactionFormScreenState extends State<TransactionFormScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _sourceController = TextEditingController();
-  final _amountController = TextEditingController();
-  final _imageUrlController = TextEditingController();
-
-  void _submit() {
-    if (_formKey.currentState!.validate()) {
-      final tx = Transaction(
-        title: _titleController.text,
-        source: _sourceController.text,
-        amount: double.tryParse(_amountController.text) ?? 0.0,
-        isIncome: widget.isIncome,
-        imageUrl: _imageUrlController.text.isNotEmpty
-            ? _imageUrlController.text
-            : 'https://via.placeholder.com/100',
-      );
-      widget.store.addTransaction(tx);
-      context.pop();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.isIncome ? 'Добавить пополнение' : 'Добавить расход';
+    final store = widget.store;
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
+        title: Text(widget.isIncome ? 'Добавить пополнение' : 'Добавить расход'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -53,28 +33,41 @@ class _TransactionFormScreenState extends State<TransactionFormScreen> {
           child: ListView(
             children: [
               TextFormField(
-                controller: _titleController,
                 decoration: const InputDecoration(labelText: 'Название'),
+                onChanged: store.updateTitle,
                 validator: (v) => v == null || v.isEmpty ? 'Введите название' : null,
               ),
               TextFormField(
-                controller: _sourceController,
                 decoration: const InputDecoration(labelText: 'Источник'),
+                onChanged: store.updateSource,
               ),
               TextFormField(
-                controller: _amountController,
                 decoration: const InputDecoration(labelText: 'Сумма'),
                 keyboardType: TextInputType.number,
+                onChanged: store.updateAmount,
                 validator: (v) => v == null || v.isEmpty ? 'Введите сумму' : null,
               ),
               TextFormField(
-                controller: _imageUrlController,
                 decoration: const InputDecoration(labelText: 'URL картинки'),
+                onChanged: store.updateImageUrl,
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _submit,
-                child: Text(title),
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    store.updateIsIncome(widget.isIncome);
+                    final tx = store.createTransaction();
+
+                    if (widget.isIncome) {
+                      getIt<IncomeStore>().addIncome(tx);
+                    } else {
+                      getIt<ExpenseStore>().addExpense(tx);
+                    }
+
+                    context.pop();
+                  }
+                },
+                child: Text(widget.isIncome ? 'Добавить пополнение' : 'Добавить расход'),
               ),
             ],
           ),

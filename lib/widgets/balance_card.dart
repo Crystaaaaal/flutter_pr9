@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import '../store/transaction_store.dart';
+import '../store/balance_store.dart';
 
 class BalanceCard extends StatelessWidget {
-  final TransactionStore store;
+  final BalanceStore store;
 
   const BalanceCard({super.key, required this.store});
 

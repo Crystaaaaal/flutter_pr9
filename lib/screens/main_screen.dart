@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import '../store/transaction_store.dart';
+import '../store/balance_store.dart';
 import '../widgets/balance_card.dart';
+import '../di/service_locator.dart';
 
 class ExpenseMainScreen extends StatelessWidget {
-  final TransactionStore store;
+  final BalanceStore balanceStore;
 
-  const ExpenseMainScreen({super.key, required this.store});
+  const ExpenseMainScreen({super.key, required this.balanceStore});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class ExpenseMainScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              BalanceCard(store: store), // Показываем баланс через separate виджет
+              BalanceCard(store: balanceStore),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => context.push('/incomes'),

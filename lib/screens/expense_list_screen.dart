@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import '../store/transaction_store.dart';
+import '../store/expense_store.dart';
+import '../di/service_locator.dart';
 
 class ExpenseListScreen extends StatelessWidget {
-  final TransactionStore store;
+  final ExpenseStore store;
 
   const ExpenseListScreen({super.key, required this.store});
 
@@ -54,7 +55,7 @@ class ExpenseListScreen extends StatelessWidget {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete_outline, color: Colors.grey),
-                        onPressed: () => store.removeTransaction(tx),
+                        onPressed: () => store.removeExpense(tx),
                       ),
                     ],
                   ),

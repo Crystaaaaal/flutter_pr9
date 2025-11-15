@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import '../store/transaction_store.dart';
+import '../store/income_store.dart';
+import '../di/service_locator.dart';
 
 class IncomeListScreen extends StatelessWidget {
-  final TransactionStore store;
+  final IncomeStore store;
 
   const IncomeListScreen({super.key, required this.store});
 
@@ -54,7 +55,7 @@ class IncomeListScreen extends StatelessWidget {
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete_outline, color: Colors.red),
-                        onPressed: () => store.removeTransaction(tx),
+                        onPressed: () => store.removeIncome(tx),
                       ),
                     ],
                   ),

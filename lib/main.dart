@@ -1,17 +1,47 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'app_router.dart';
+import 'store/transaction_store.dart';
 
-import 'models/transaction.dart';
+final transactionStore = TransactionStore();
 
-import 'di_container.dart';
+// Начальные данные
+final initialExpenses = [
+  Transaction(
+    amount: 1200,
+    title: 'Продукты',
+    source: 'Покупка еды в супермаркете',
+    isIncome: false,
+    imageUrl: 'https://images.thevoicemag.ru/upload/img_cache/493/493173ba9d947eb9624440f06237437e_cropped_666x444.jpg',
+  ),
+  Transaction(
+    amount: 350,
+    title: 'Транспорт',
+    source: 'Проезд на автобусе',
+    isIncome: false,
+    imageUrl: 'https://www.shutterstock.com/image-vector/transport-travel-car-train-bus-600w-506212144.jpg',
+  ),
+];
+
+final initialIncomes = [
+  Transaction(
+    amount: 50000,
+    title: 'Зарплата',
+    source: 'Основная работа',
+    isIncome: true,
+    imageUrl: 'https://img.gazeta.ru/files3/705/16249705/vkonvertr-pic_32ratio_1200x800-1200x800-79503.jpg',
+  ),
+  Transaction(
+    amount: 7000,
+    title: 'Фриланс',
+    source: 'Проект по дизайну',
+    isIncome: true,
+    imageUrl: 'https://cdn-icons-png.flaticon.com/512/1807/1807705.png',
+  ),
+];
 
 void main() {
-  final TransactionStorage storage = TransactionStorage();
-  storage.expenses.addAll(initialExpenses);
-  storage.incomes.addAll(initialIncomes);
-  storage.recalculateBalance();
-  setupDI(storage);
+  transactionStore.setStartData(initialIncomes, initialExpenses);
   runApp(const ExpenseApp());
 }
 
@@ -30,37 +60,3 @@ class ExpenseApp extends StatelessWidget {
     );
   }
 }
-
-final List<Transaction> initialExpenses = [
-  Transaction(
-    amount: 1200,
-    title: 'Продукты',
-    source: 'Покупка еды в супермаркете',
-    isIncome: false,
-    imageUrl: 'https://images.thevoicemag.ru/upload/img_cache/493/493173ba9d947eb9624440f06237437e_cropped_666x444.jpg',
-  ),
-  Transaction(
-    amount: 350,
-    title: 'Транспорт',
-    source: 'Проезд на автобусе',
-    isIncome: false,
-    imageUrl: 'https://www.shutterstock.com/image-vector/transport-travel-car-train-bus-600w-506212144.jpg',
-  ),
-];
-
-final List<Transaction> initialIncomes = [
-  Transaction(
-    amount: 50000,
-    title: 'Зарплата',
-    source: 'Основная работа',
-    isIncome: true,
-    imageUrl: 'https://img.gazeta.ru/files3/705/16249705/vkonvertr-pic_32ratio_1200x800-1200x800-79503.jpg',
-  ),
-  Transaction(
-    amount: 7000,
-    title: 'Фриланс',
-    source: 'Проект по дизайну',
-    isIncome: true,
-    imageUrl: 'https://cdn-icons-png.flaticon.com/512/1807/1807705.png',
-  ),
-];

@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
-import '../di_container.dart';
-import '../models/transaction.dart';
+import '../store/transaction_store.dart';
 
 class ExpenseListScreen extends StatelessWidget {
+  final TransactionStore store;
+
+  const ExpenseListScreen({super.key, required this.store});
+
   @override
   Widget build(BuildContext context) {
-    final expenses = getIt<List<Transaction>>(instanceName: 'expenses');
-    final storage = getIt<TransactionStorage>();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Расходы'),
@@ -29,34 +30,37 @@ class ExpenseListScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: expenses.isEmpty
-          ? const Center(child: Text('Пока нет расходов'))
-          : ListView.builder(
-        itemCount: expenses.length,
-        itemBuilder: (context, i) {
-          final tx = expenses[i];
-          return Card(
-            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            child: ListTile(
-              leading: CircleAvatar(backgroundImage: NetworkImage(tx.imageUrl)),
-              title: Text(tx.title),
-              subtitle: Text(tx.source),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    '-${tx.amount.toStringAsFixed(2)} ₽',
-                    style: const TextStyle(color: Colors.red),
+      body: Observer(
+        builder: (_) {
+          if (store.expenses.isEmpty) {
+            return const Center(child: Text('Пока нет расходов'));
+          }
+          return ListView.builder(
+            itemCount: store.expenses.length,
+            itemBuilder: (context, i) {
+              final tx = store.expenses[i];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                child: ListTile(
+                  leading: CircleAvatar(backgroundImage: NetworkImage(tx.imageUrl)),
+                  title: Text(tx.title),
+                  subtitle: Text(tx.source),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        '-${tx.amount.toStringAsFixed(2)} ₽',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline, color: Colors.grey),
+                        onPressed: () => store.removeTransaction(tx),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.grey),
-                    onPressed: () {
-                      storage.removeTransaction(tx);
-                    },
-                  ),
-                ],
-              ),
-            ),
+                ),
+              );
+            },
           );
         },
       ),

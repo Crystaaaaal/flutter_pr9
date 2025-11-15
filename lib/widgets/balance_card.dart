@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:get_it/get_it.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import '../store/transaction_store.dart';
 
 class BalanceCard extends StatelessWidget {
-  const BalanceCard({super.key});
+  final TransactionStore store;
+
+  const BalanceCard({super.key, required this.store});
 
   @override
   Widget build(BuildContext context) {
-    final balance = GetIt.instance<ValueNotifier<double>>();
-    return ValueListenableBuilder<double>(
-      valueListenable: balance,
-      builder: (context, value, _) {
+    return Observer(
+      builder: (_) {
+        final value = store.balance;
         return Card(
           elevation: 3,
           color: Colors.teal.shade50,

@@ -14,36 +14,43 @@ class Transaction {
     required this.isIncome,
     required this.imageUrl,
   });
-}
 
-class TransactionStorage {
-  final List<Transaction> incomes = [];
-  final List<Transaction> expenses = [];
-  final ValueNotifier<double> balance = ValueNotifier(0.0);
-
-  void addTransaction(Transaction tx) {
-    if (tx.isIncome) {
-      incomes.add(tx);
-      balance.value += tx.amount;
-    } else {
-      expenses.add(tx);
-      balance.value -= tx.amount;
-    }
+  Map<String, dynamic> toJson() {
+    return {
+      'amount': amount,
+      'title': title,
+      'source': source,
+      'isIncome': isIncome,
+      'imageUrl': imageUrl,
+    };
   }
 
-  void removeTransaction(Transaction tx) {
-    if (tx.isIncome) {
-      incomes.remove(tx);
-      balance.value -= tx.amount;
-    } else {
-      expenses.remove(tx);
-      balance.value += tx.amount;
-    }
+  factory Transaction.fromJson(Map<String, dynamic> json) {
+    return Transaction(
+      amount: (json['amount'] as num).toDouble(),
+      title: json['title'] as String,
+      source: json['source'] as String,
+      isIncome: json['isIncome'] as bool,
+      imageUrl: json['imageUrl'] as String,
+    );
   }
 
-  void recalculateBalance() {
-    final totalIncome = incomes.fold<double>(0.0, (sum, tx) => sum + tx.amount);
-    final totalExpenses = expenses.fold<double>(0.0, (sum, tx) => sum + tx.amount);
-    balance.value = totalIncome - totalExpenses;
-  }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Transaction &&
+              runtimeType == other.runtimeType &&
+              amount == other.amount &&
+              title == other.title &&
+              source == other.source &&
+              isIncome == other.isIncome &&
+              imageUrl == other.imageUrl;
+
+  @override
+  int get hashCode =>
+      amount.hashCode ^
+      title.hashCode ^
+      source.hashCode ^
+      isIncome.hashCode ^
+      imageUrl.hashCode;
 }
